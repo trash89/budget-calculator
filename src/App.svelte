@@ -14,20 +14,42 @@
   let setName = "";
   let setAmount = null;
   let setId = null;
+  // toggle form variables
+  let isFormOpen = false;
   // reactive
   $: isEditing = setId ? true : false;
   $: total = expenses.reduce((acc, curr) => {
     return (acc += curr.amount);
   }, 0);
   // functions
+  function showForm() {
+    isFormOpen = true;
+  }
+  function hideForm() {
+    isFormOpen = false;
+    setName = "";
+    setAmount = null;
+    setId = null;
+  }
   function removeExpense(id) {
     expenses = expenses.filter((item) => item.id !== id);
   }
   function clearExpenses() {
     expenses = [];
   }
-  function addExpense({ name, amount }) {
-    let expense = { id: Math.random() * Date.now(), name, amount };
+  function handleSubmit() {
+    if (isEditing) {
+      editExpense();
+    } else {
+      addExpense();
+    }
+    setId = null;
+    setAmount = null;
+    setName = "";
+  }
+
+  function addExpense() {
+    let expense = { id: Math.random() * Date.now(), name: setName, amount: setAmount };
     expenses = [expense, ...expenses];
   }
   function setModifiedExpense(id) {
@@ -35,14 +57,12 @@
     setId = expense.id;
     setName = expense.name;
     setAmount = expense.amount;
+    showForm();
   }
-  function editExpense({ name, amount }) {
+  function editExpense() {
     expenses = expenses.map((item) => {
-      return item.id === setId ? { ...item, name, amount } : { ...item };
+      return item.id === setId ? { ...item, name: setName, amount: setAmount } : { ...item };
     });
-    setId = null;
-    setAmount = null;
-    setName = "";
   }
   // context
   setContext("remove", removeExpense);
@@ -52,9 +72,11 @@
 <!-- <style></style> -->
 <!-- <CSS/STYLING -->
 
-<Navbar />
+<Navbar {showForm} />
 <main class="content">
-  <ExpenseForm {addExpense} name={setName} amount={setAmount} {isEditing} {editExpense} />
+  {#if isFormOpen}
+    <ExpenseForm bind:name={setName} bind:amount={setAmount} {isEditing} {handleSubmit} {hideForm} />
+  {/if}
   <Totals title="total expenses" {total} />
   <ExpensesList {expenses} />
   <button type="button" class="btn btn-primary btn-block" on:click={clearExpenses}> clear expenses </button>
