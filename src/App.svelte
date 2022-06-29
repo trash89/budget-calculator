@@ -1,13 +1,29 @@
 <script>
+  import { setContext } from "svelte";
+  //components
   import Navbar from "./Navbar.svelte";
-  let fruits = ["apple", "orange", "lemon"];
+  import ExpensesList from "./ExpensesList.svelte";
+  //data
+  import expensesData from "./expenses";
+
+  // variables
+  let expenses = [...expensesData];
+  // functions
+  function removeExpense(id) {
+    expenses = expenses.filter((item) => item.id !== id);
+  }
+  function clearExpenses() {
+    expenses = [];
+  }
+  // context
+  setContext("remove", removeExpense);
 </script>
 
 <!-- <style></style> -->
 <!-- <CSS/STYLING -->
 
 <Navbar />
-
-{#each fruits as item}
-  <h1>fruit : {item}</h1>
-{/each}
+<main class="content">
+  <ExpensesList {expenses} />
+  <button type="button" class="btn btn-primary btn-block" on:click={clearExpenses}> clear expenses </button>
+</main>
