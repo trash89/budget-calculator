@@ -1,4 +1,18 @@
 <script>
+  import { onMount, onDestroy, beforeUpdate, afterUpdate } from "svelte";
+  // onMount(() => {
+  //   console.log("form has mounted");
+  // });
+  // beforeUpdate(() => {
+  //   console.log("form before update");
+  // });
+  // afterUpdate(() => {
+  //   console.log("form after update");
+  // });
+  // onDestroy(() => {
+  //   console.log("form is hidden");
+  // });
+
   import Title from "./Title.svelte";
   export let name = "";
   export let amount = null;
